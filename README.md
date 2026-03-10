@@ -1,4 +1,4 @@
-# HOT4D-C4D2026-plus
+# HOT4D-C4D2026Plus
 
 An adaptation workspace for bringing **HOT4D** forward toward compatibility with **Cinema 4D 2026 and later**.
 
@@ -47,6 +47,7 @@ Current first-pass notes:
 This repository is an adaptation/maintenance continuation and is **not** the original upstream project.
 If you need original history and context, start here:
 https://github.com/Valkaari/HOT4D
+
 
 
 
