@@ -1,6 +1,6 @@
-# HOT4D-C4D2026
+# HOT4D-C4D-Compatibility
 
-An adaptation workspace for bringing **HOT4D** forward toward compatibility with **Cinema 4D 2026**.
+An adaptation workspace for bringing **HOT4D** forward toward compatibility with **modern Cinema 4D versions**.
 
 ## Upstream source
 
@@ -23,7 +23,7 @@ See:
 This repository is intended to:
 - preserve the original HOT4D codebase
 - investigate build and SDK breakages against newer Cinema 4D versions
-- implement compatibility changes for Cinema 4D 2026
+- implement compatibility changes for modern Cinema 4D versions
 - publish adaptation work under the same open-source license family required by upstream
 
 ## Repository layout
@@ -36,7 +36,7 @@ The code structure is kept close to upstream:
 ## Status
 
 Initial fork-style bootstrap is complete.
-Cinema 4D 2026 compatibility analysis and porting work is in progress.
+modern Cinema 4D versions compatibility analysis and porting work is in progress.
 
 Current first-pass notes:
 - see `BUILDING.md` for SDK/build expectations and known blockers
@@ -47,3 +47,4 @@ Current first-pass notes:
 This repository is an adaptation/maintenance continuation and is **not** the original upstream project.
 If you need original history and context, start here:
 https://github.com/Valkaari/HOT4D
+

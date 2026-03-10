@@ -1,8 +1,8 @@
-# C4D 2026 port TODO
+# future C4D versions port TODO
 
 ## Hard blockers
 
-- [ ] Build against an actual Cinema 4D 2026 SDK checkout.
+- [ ] Build against an actual future Cinema 4D versions SDK checkout.
 - [ ] Generate missing framework/interface headers:
   - [ ] `source/registration_com_valkaari_hot4D.hxx`
   - [ ] `source/OceanSimulation/OceanSimulation_decl1.hxx`
@@ -25,7 +25,8 @@
 
 ## Validation
 
-- [ ] Test plugin registration in Cinema 4D 2026.
+- [ ] Test plugin registration in future Cinema 4D versions.
 - [ ] Verify object/deformer UI loads correctly.
 - [ ] Verify effector registration and MoGraph interaction.
 - [ ] Verify ocean simulation output, jacobian map writing, foam behavior, and field/falloff interaction.
+

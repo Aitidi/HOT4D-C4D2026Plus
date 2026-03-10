@@ -1,6 +1,6 @@
-# Building HOT4D for Cinema 4D 2026
+# Building HOT4D for modern Cinema 4D versions
 
-This repository is an early adaptation pass of the original HOT4D plugin toward the Cinema 4D 2026 SDK.
+This repository is an early adaptation pass of the original HOT4D plugin toward the modern Cinema 4D versions SDK.
 
 ## Expected build system
 
@@ -17,7 +17,7 @@ In practice, this means the repository is **not self-contained**: it expects to 
 
 A full build likely requires all of the following:
 
-1. The **Cinema 4D 2026 C++ SDK** (or a very close compatible SDK version).
+1. The **modern Cinema 4D versions C++ SDK** (or a very close compatible SDK version).
 2. The Maxon project generation/build tooling used by current SDK examples.
 3. SDK include paths for the framework APIs and MoGraph / object plugin headers.
 4. Generated registration/interface files that are not committed in this repository.
@@ -50,7 +50,7 @@ Those are typical generated artifacts in a modern Cinema 4D framework project. T
 
 ## Recommended bring-up workflow
 
-1. Install the Cinema 4D 2026 SDK.
+1. Install the modern Cinema 4D versions SDK.
 2. Place this repository where the SDK tooling expects plugin projects, or integrate it into the SDK project generator workflow.
 3. Generate the missing `*.hxx` registration/interface files.
 4. Build once and collect the first real compiler error set.
@@ -64,3 +64,4 @@ This pass focused on:
 - documenting current blockers,
 - making low-risk portability cleanups,
 - avoiding speculative API rewrites without the real SDK present.
+
