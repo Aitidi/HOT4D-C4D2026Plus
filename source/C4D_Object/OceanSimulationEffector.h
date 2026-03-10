@@ -35,7 +35,7 @@ public:
 
 private:
 	OceanSimulation::OceanRef  oceanSimulationRef_; ///< the reference to the ocean simualtion
-	maxon::Float						currentTime_; ///< store the current time of the animation used in check dirty
+	maxon::Float						currentTime_ = 0.0; ///< store the current time of the animation used in check dirty
 
 
 

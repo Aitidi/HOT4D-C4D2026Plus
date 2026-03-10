@@ -13,9 +13,6 @@
 
 Bool PluginStart()
 {
-	VERSIONTYPE versionType = GeGetVersionType();
-
-
 	if (!RegisterOceanSimulationDescription())
 		return false;
 	if (!RegisterOceanSimulationDeformer()) 
@@ -27,7 +24,7 @@ Bool PluginStart()
 	
 	
 	ApplicationOutput("---------------"_s);
-	ApplicationOutput("HOT4D For R21 v0.7"_s);
+	ApplicationOutput("HOT4D C4D2026Plus adaptation build"_s);
 	ApplicationOutput("---------------"_s);
 
 

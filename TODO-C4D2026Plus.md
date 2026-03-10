@@ -21,6 +21,7 @@
 
 - [x] Normalize a few source include paths to be more robust on case-sensitive filesystems.
 - [ ] Decide whether `source/C4D_Object/OceanSImulationDesc.cpp` should be renamed for casing consistency.
+- [x] Add a source-tree migration/risk note (`docs/MIGRATION-NOTES-C4D2026Plus.md`).
 - [ ] Add SDK-specific build instructions once the exact 2026 workflow is confirmed.
 
 ## Validation

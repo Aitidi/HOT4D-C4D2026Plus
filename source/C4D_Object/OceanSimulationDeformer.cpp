@@ -31,10 +31,10 @@ maxon::Float OceanSimulationDeformer::MapRange(maxon::Float value, const maxon::
 {
 	Float inrange = max_input - min_input;
 
-	//if (CompareFloatTolerant(value, RCO 0.0)) value = RCO 0.0;  // Prevent DivByZero error
-	if (CompareFloatTolerant(value, 0.0)) 
-		value = 0.0;  // Prevent DivByZero error
-	else 
+	// Guard against degenerate source ranges before normalizing.
+	if (CompareFloatTolerant(inrange, 0.0))
+		value = 0.0;
+	else
 		value = (value - min_input) / inrange;    // Map input range to [0.0 ... 1.0]
 
 

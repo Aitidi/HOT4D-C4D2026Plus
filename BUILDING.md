@@ -56,6 +56,12 @@ Those are typical generated artifacts in a modern Cinema 4D framework project. T
 4. Build once and collect the first real compiler error set.
 5. Address SDK/API breakages iteratively from that compiler output.
 
+## Additional migration notes
+
+For a module-by-module source-tree map and upgrade-risk assessment, see:
+
+- `docs/MIGRATION-NOTES-C4D2026Plus.md`
+
 ## Scope of this first pass
 
 This pass focused on:

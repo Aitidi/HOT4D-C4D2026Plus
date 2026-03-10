@@ -40,7 +40,8 @@ Cinema 4D 2026 and later compatibility analysis and porting work is in progress.
 
 Current first-pass notes:
 - see `BUILDING.md` for SDK/build expectations and known blockers
-- see `TODO-C4D2026.md` for the active porting checklist
+- see `TODO-C4D2026Plus.md` for the active porting checklist
+- see `docs/MIGRATION-NOTES-C4D2026Plus.md` for the source-tree responsibility/risk map
 
 ## Attribution
 

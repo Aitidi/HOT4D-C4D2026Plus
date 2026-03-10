@@ -20,12 +20,12 @@ private:
 
 	// This is where all the wave action takes place
 	//newOcean::Ocean						*ocean_;  ///< ocean main object.
-	maxon::Float						currentTime_; ///< store the current time of the animation used in check dirty
+	maxon::Float						currentTime_ = 0.0; ///< store the current time of the animation used in check dirty
 	OceanSimulation::OceanRef			oceanSimulationRef_; ///< ocean reference
 
 	// manage falloff
 	AutoAlloc<C4D_Falloff>		falloff_; ///< the falloff object to be compatible with fields.
-	maxon::Int32				falloffDirtyCheck_; ///< store the checkdirty to see if the fields have changed.
+	maxon::Int32				falloffDirtyCheck_ = 0; ///< store the checkdirty to see if the fields have changed.
 	
 	maxon::Float				MapRange(maxon::Float value, const maxon::Float min_input, const maxon::Float max_input, const maxon::Float min_output, const maxon::Float max_output) const;
 public:
