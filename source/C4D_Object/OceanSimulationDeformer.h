@@ -6,7 +6,9 @@
 //
 
 
+#include "c4d.h"
 #include "c4d_falloffdata.h"
+#include "OceanSimulation/OceanSimulation_decl.h"
 
 class OceanSimulationDeformer : public ObjectData
 {

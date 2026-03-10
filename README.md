@@ -38,6 +38,10 @@ The code structure is kept close to upstream:
 Initial fork-style bootstrap is complete.
 Cinema 4D 2026 compatibility analysis and porting work is in progress.
 
+Current first-pass notes:
+- see `BUILDING.md` for SDK/build expectations and known blockers
+- see `TODO-C4D2026.md` for the active porting checklist
+
 ## Attribution
 
 This repository is an adaptation/maintenance continuation and is **not** the original upstream project.
