@@ -9,51 +9,41 @@
 #include "c4d.h"
 #include "main.h"
 
-
-
+namespace cinema
+{
 Bool PluginStart()
 {
-	if (!RegisterOceanSimulationDescription())
+	if (!::RegisterOceanSimulationDescription())
 		return false;
-	if (!RegisterOceanSimulationDeformer()) 
+	if (!::RegisterOceanSimulationDeformer()) 
+		return false;
+	if (!::RegisterOceanSimulationEffector())
 		return false;
 
-	if (!RegisterOceanSimulationEffector())
-		return false;
-
-	
-	
 	ApplicationOutput("---------------"_s);
 	ApplicationOutput("HOT4D C4D2026Plus adaptation build"_s);
 	ApplicationOutput("---------------"_s);
-
 
 	return true;
 }
 
 void PluginEnd()
 {
-	
 }
 
 Bool PluginMessage(Int32 id, void *data)
 {
-	// use the following lines to set a plugin priority
-	//
 	switch (id)
 	{
 		case C4DPL_INIT_SYS:
-			
 			if (!g_resource.Init()) 
-				return false; // don't start plugin without resource
+				return false;
 			return true;
 
 		case C4DMSG_PRIORITY:
-			// react to this message to set a plugin priority (to determine in which order plugins are initialized or loaded
-			//	SetPluginPriority(data, C4DPL_INIT_PRIORITY_PLUGINS);
 			return true;
-		
 	}
 	
 	return false;
+}
 }
