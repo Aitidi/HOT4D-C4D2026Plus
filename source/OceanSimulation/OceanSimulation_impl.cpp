@@ -12,6 +12,7 @@
 #include "maxon/parallelimage.h"
 #include "c4d_thread.h"
 
+#include <limits>
 
 namespace OceanSimulation
 {
@@ -235,7 +236,7 @@ namespace OceanSimulation
 			
 			
 			
-			maxon::Int titleSize = M_ / GeGetCurrentThreadCount();
+			maxon::Int titleSize = M_ / maxon::ThreadRef::GetCurrentThreadCount();
 
 			auto prepareDisp = [&currentTime, &timeScale, this](maxon::Int i, maxon::Int j)
 			{

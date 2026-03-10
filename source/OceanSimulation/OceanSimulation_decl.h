@@ -1,3 +1,5 @@
+#pragma once
+
 //#include "maxon/commandbase.h"
 //#include "maxon/apibase.h"
 
@@ -21,7 +23,7 @@ namespace OceanSimulation {
 
 
 
-	class OceanInterface : MAXON_INTERFACE_BASES(maxon::Object)
+	class OceanInterface : MAXON_INTERFACE_BASES(maxon::ObjectInterface)
 	{
 		MAXON_INTERFACE(OceanInterface, MAXON_REFERENCE_NORMAL, "com.valkaari.OceanSimulation.interfaces.ocean");
 

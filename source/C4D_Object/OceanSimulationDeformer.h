@@ -10,6 +10,8 @@
 #include "c4d_falloffdata.h"
 #include "OceanSimulation/OceanSimulation_decl.h"
 
+using namespace cinema;
+
 class OceanSimulationDeformer : public ObjectData
 {
 	INSTANCEOF(OceanSimulationDeformer, ObjectData);

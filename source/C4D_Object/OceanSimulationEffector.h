@@ -2,40 +2,30 @@
 #pragma once
 
 #include "c4d.h"
-#include "c4d_baseeffectordata.h"
+#include "c4d_baseeffectorplugin.h"
 #include "OceanSimulation/OceanSimulation_decl.h"
+
+using namespace cinema;
 
 class OceanSimulationEffector : public EffectorData
 {
 	INSTANCEOF(OceanSimulationEffector, EffectorData);
 public:
+	virtual Bool InitEffector(GeListNode* node, Bool isCloneInit) override;
 
-	virtual Bool				InitEffector(GeListNode* node);
-	
+	virtual maxon::Result<maxon::GenericData> InitPoints(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, MoData* md, BaseThread* thread) const override;
 
-	virtual void				InitPoints(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, MoData* md, BaseThread* thread);
+	virtual void CalcPointValue(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, const maxon::GenericData& extraData, MutableEffectorDataStruct& mdata, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight) const override;
+	virtual Vector CalcPointColor(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, const maxon::GenericData& extraData, const MutableEffectorDataStruct& mdata, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight) const override;
 
-	virtual void				CalcPointValue(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight);
-	virtual Vector				CalcPointColor(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight);
-
-	
-	virtual Bool 	AddToExecution(BaseObject *op, PriorityList *list);
-
-	virtual EXECUTIONRESULT 	Execute(BaseObject *op, BaseDocument *doc, BaseThread *bt, Int32 priority, EXECUTIONFLAGS flags);
-
-	//virtual Int32 				GetEffectorFlags();
-
-	
-	virtual Bool				GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc);
-
-
-	
+	virtual EXECUTIONRESULT Execute(BaseObject* op, BaseDocument* doc, BaseThread* bt, Int32 priority, EXECUTIONFLAGS flags) override;
+	virtual Bool GetDEnabling(const GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc) const override;
 
 	static NodeData* Alloc() { return NewObjClear(OceanSimulationEffector); }
 
 private:
-	OceanSimulation::OceanRef  oceanSimulationRef_; ///< the reference to the ocean simualtion
-	maxon::Float						currentTime_ = 0.0; ///< store the current time of the animation used in check dirty
+	mutable OceanSimulation::OceanRef oceanSimulationRef_; ///< the reference to the ocean simualtion
+	mutable maxon::Float currentTime_ = 0.0; ///< store the current time of the animation used in check dirty
 
 
 
@@ -49,7 +39,7 @@ private:
 	/// @return		maxon::OK on success
 	//----------------------------------------------------------------------------------------
 
-	maxon::Result<void> EvaluatePoint(BaseObject* op, const maxon::Vector p, maxon::Vector &displacement) const;
+	maxon::Result<void> EvaluatePoint(const BaseObject* op, const maxon::Vector p, maxon::Vector &displacement) const;
 
 };
 

@@ -1,10 +1,7 @@
 
 #include "c4d.h"
 #include "c4d_symbols.h"
-#include "c4d_baseeffectordata.h"
-
-
-// #include "c4d_baseeffectorplugin.h"
+#include "c4d_baseeffectorplugin.h"
 
 
 
@@ -19,7 +16,7 @@
 
 #define ID_OCEAN_SIMULATION_EFFECTOR 1051489
 
-Bool OceanSimulationEffector::GetDEnabling(GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc)
+Bool OceanSimulationEffector::GetDEnabling(const GeListNode* node, const DescID& id, const GeData& t_data, DESCFLAGS_ENABLE flags, const BaseContainer* itemdesc) const
 {
 	if (id[0].id == CURRENTTIME)
 	{
@@ -42,13 +39,6 @@ Bool OceanSimulationEffector::GetDEnabling(GeListNode *node, const DescID &id, c
 
 
 
-
-Bool 	OceanSimulationEffector::AddToExecution(BaseObject *op, PriorityList *list)
-{
-	list->Add(op, EXECUTIONPRIORITY_EXPRESSION, EXECUTIONFLAGS::NONE);
-
-	return true;
-}
 
 EXECUTIONRESULT 	OceanSimulationEffector::Execute(BaseObject *op, BaseDocument *doc, BaseThread *bt, Int32 priority, EXECUTIONFLAGS flags)
 {
@@ -85,7 +75,7 @@ EXECUTIONRESULT 	OceanSimulationEffector::Execute(BaseObject *op, BaseDocument *
 }
 
 
-Bool OceanSimulationEffector::InitEffector(GeListNode* node)
+Bool OceanSimulationEffector::InitEffector(GeListNode* node, Bool isCloneInit)
 {
 	BaseObject		*op = (BaseObject*)node;
 	if (!op)
@@ -97,32 +87,34 @@ Bool OceanSimulationEffector::InitEffector(GeListNode* node)
 		return false;
 
 
-	op->SetParameter(DescID(OCEAN_RESOLUTION), GeData(7), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(SEED), GeData(12345), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(OCEAN_SIZE), GeData(400.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(WIND_SPEED), GeData(20.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(WIND_DIRECTION), GeData(120.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(SHRT_WAVELENGHT), GeData(0.01), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(WAVE_HEIGHT), GeData(30.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(CHOPAMOUNT), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(DAMP_REFLECT), GeData(1.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(WIND_ALIGNMENT), GeData(1.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(OCEAN_DEPTH), GeData(200.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(CURRENTTIME), GeData(0.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(TIMELOOP), GeData(90), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(TIMESCALE), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(AUTO_ANIM_TIME), GeData(true), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(DO_CATMU_INTER), GeData(false), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(DO_JACOBIAN), GeData(false), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(DO_CHOPYNESS), GeData(true), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(PSEL_THRES), GeData(0.1), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(JACOB_THRES), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(DescID(FOAM_THRES), GeData(0.03), DESCFLAGS_SET::NONE);
+	if (!isCloneInit)
+	{
+		op->SetParameter(DescID(OCEAN_RESOLUTION), GeData(7), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(SEED), GeData(12345), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(OCEAN_SIZE), GeData(400.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(WIND_SPEED), GeData(20.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(WIND_DIRECTION), GeData(120.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(SHRT_WAVELENGHT), GeData(0.01), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(WAVE_HEIGHT), GeData(30.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(CHOPAMOUNT), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(DAMP_REFLECT), GeData(1.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(WIND_ALIGNMENT), GeData(1.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(OCEAN_DEPTH), GeData(200.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(CURRENTTIME), GeData(0.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(TIMELOOP), GeData(90), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(TIMESCALE), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(AUTO_ANIM_TIME), GeData(true), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(DO_CATMU_INTER), GeData(false), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(DO_JACOBIAN), GeData(false), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(DO_CHOPYNESS), GeData(true), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(PSEL_THRES), GeData(0.1), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(JACOB_THRES), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(DescID(FOAM_THRES), GeData(0.03), DESCFLAGS_SET::NONE);
 
-	
-	bc->SetFloat(ID_MG_BASEEFFECTOR_MINSTRENGTH, -1.0);
-	bc->SetBool(ID_MG_BASEEFFECTOR_POSITION_ACTIVE, true);
-	bc->SetVector(ID_MG_BASEEFFECTOR_POSITION, Vector(50.0));
+		bc->SetFloat(ID_MG_BASEEFFECTOR_MINSTRENGTH, -1.0);
+		bc->SetBool(ID_MG_BASEEFFECTOR_POSITION_ACTIVE, true);
+		bc->SetVector(ID_MG_BASEEFFECTOR_POSITION, Vector(50.0));
+	}
 	
 	iferr_scope_handler{
 		err.DiagOutput();
@@ -140,18 +132,13 @@ Bool OceanSimulationEffector::InitEffector(GeListNode* node)
 	return true;
 }
 
-void OceanSimulationEffector::InitPoints(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, MoData* md, BaseThread* thread)
+maxon::Result<maxon::GenericData> OceanSimulationEffector::InitPoints(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, MoData* md, BaseThread* thread) const
 {
+	iferr_scope;
 	
-	BaseContainer* bc = op->GetDataInstance();
+	const BaseContainer* bc = op->GetDataInstance();
 	if (!bc)
-		return;
-
-	iferr_scope_handler{
-		err.DiagOutput();
-		
-		return;
-	};
+		return maxon::GenericData();
 
 	if (oceanSimulationRef_ == nullptr)
 	{
@@ -230,10 +217,10 @@ void OceanSimulationEffector::InitPoints(BaseObject* op, BaseObject* gen, BaseDo
 	}
 
 	oceanSimulationRef_.Animate(currentTime_, timeLoop, timeScale, oceanDepth, chopAmount, true, doChopyness, false, false) iferr_return;
-	
+	return maxon::GenericData();
 }
 
-maxon::Result<void> OceanSimulationEffector::EvaluatePoint(BaseObject* op, const maxon::Vector p, maxon::Vector &displacement) const
+maxon::Result<void> OceanSimulationEffector::EvaluatePoint(const BaseObject* op, const maxon::Vector p, maxon::Vector &displacement) const
 {
 	iferr_scope;
 
@@ -262,7 +249,7 @@ maxon::Result<void> OceanSimulationEffector::EvaluatePoint(BaseObject* op, const
 }
 
 
-void OceanSimulationEffector::CalcPointValue(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight)
+void OceanSimulationEffector::CalcPointValue(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, const maxon::GenericData& extraData, MutableEffectorDataStruct& mdata, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight) const
 {
 
 	
@@ -277,15 +264,13 @@ void OceanSimulationEffector::CalcPointValue(BaseObject* op, BaseObject* gen, Ba
 	
 	EvaluatePoint(op, globalpos, disp) iferr_return;
 
-	EffectorStrengths* es = (EffectorStrengths*)data->strengths;
-	
-	es->pos = disp;
-	es->rot = disp;
-	es->scale = disp;
+	mdata._strengthValues.pos = disp;
+	mdata._strengthValues.rot = disp;
+	mdata._strengthValues.scale = disp;
 
 }
 
-Vector OceanSimulationEffector::CalcPointColor(BaseObject* op, BaseObject* gen, BaseDocument* doc, EffectorDataStruct* data, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight)
+Vector OceanSimulationEffector::CalcPointColor(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, const maxon::GenericData& extraData, const MutableEffectorDataStruct& mdata, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight) const
 {
 	iferr_scope_handler
 	{
