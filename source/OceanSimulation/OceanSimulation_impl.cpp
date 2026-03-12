@@ -9,6 +9,9 @@
 #include "maxon/parallelimage.h"
 #include "c4d_thread.h"
 #include <limits>
+#include <type_traits>
+
+static_assert(std::is_same_v<maxon::details::ComponentIdentifierMetaData<std::decay<decltype(OceanSimulation::Ocean)>::type, maxon::Class<>>::type, maxon::Class<OceanSimulation::OceanRef>>, "Ocean declaration metadata type mismatch");
 
 namespace OceanSimulation
 {
@@ -498,6 +501,7 @@ namespace OceanSimulation
 	maxon::Result<OceanRef> CreateOceanDirect()
 	{
 		const auto& implClass = OceanImplementation::GetClass();
+		ApplicationOutput("HOT4D DEBUG: OceanImplementation::GetClass id=@"_s, implClass.GetId());
 		iferr (auto implOcean = implClass.Create())
 		{
 			ApplicationOutput("HOT4D DEBUG: CreateOceanDirect failed: @", err);
