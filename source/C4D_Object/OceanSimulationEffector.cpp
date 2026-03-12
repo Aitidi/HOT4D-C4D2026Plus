@@ -42,8 +42,7 @@ Bool OceanSimulationEffector::GetDEnabling(const GeListNode* node, const DescID&
 
 EXECUTIONRESULT 	OceanSimulationEffector::Execute(BaseObject *op, BaseDocument *doc, BaseThread *bt, Int32 priority, EXECUTIONFLAGS flags)
 {
-
-	
+	ApplicationOutput("HOT4D DEBUG: Effector::Execute op=@ priority=@ flags=@", op ? op->GetName() : "<null>"_s, priority, flags);
 
 	if (priority != EXECUTIONPRIORITY_EXPRESSION)
 		return EXECUTIONRESULT::OK;
@@ -77,6 +76,7 @@ EXECUTIONRESULT 	OceanSimulationEffector::Execute(BaseObject *op, BaseDocument *
 
 Bool OceanSimulationEffector::InitEffector(GeListNode* node, Bool isCloneInit)
 {
+	ApplicationOutput("HOT4D DEBUG: Effector::InitEffector nodePtr=@ cloneInit=@", reinterpret_cast<const void*>(node), isCloneInit);
 	BaseObject		*op = (BaseObject*)node;
 	if (!op)
 		return false;
@@ -124,16 +124,17 @@ Bool OceanSimulationEffector::InitEffector(GeListNode* node, Bool isCloneInit)
 
 	if (oceanSimulationRef_ == nullptr)
 	{
+		ApplicationOutput("HOT4D DEBUG: Effector::InitEffector creating oceanSimulationRef"_s);
 		oceanSimulationRef_ = OceanSimulation::Ocean().Create() iferr_return;
 	}
 
-	
-
+	ApplicationOutput("HOT4D DEBUG: Effector::InitEffector completed ok"_s);
 	return true;
 }
 
 maxon::Result<maxon::GenericData> OceanSimulationEffector::InitPoints(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, MoData* md, BaseThread* thread) const
 {
+	ApplicationOutput("HOT4D DEBUG: Effector::InitPoints opType=@ genType=@", op ? op->GetType() : -1, gen ? gen->GetType() : -1);
 	iferr_scope;
 	
 	const BaseContainer* bc = op->GetDataInstance();
@@ -217,6 +218,7 @@ maxon::Result<maxon::GenericData> OceanSimulationEffector::InitPoints(const Base
 	}
 
 	oceanSimulationRef_.Animate(currentTime_, timeLoop, timeScale, oceanDepth, chopAmount, true, doChopyness, false, false) iferr_return;
+	ApplicationOutput("HOT4D DEBUG: Effector::InitPoints animated currentTime=@", currentTime_);
 	return maxon::GenericData();
 }
 
@@ -252,8 +254,9 @@ maxon::Result<void> OceanSimulationEffector::EvaluatePoint(const BaseObject* op,
 
 void OceanSimulationEffector::CalcPointValue(const BaseObject* op, const BaseObject* gen, const BaseDocument* doc, const EffectorDataStruct& data, const maxon::GenericData& extraData, MutableEffectorDataStruct& mdata, Int32 index, MoData* md, const Vector& globalpos, Float fall_weight) const
 {
+	if (index == 0)
+		ApplicationOutput("HOT4D DEBUG: Effector::CalcPointValue first point globalpos=(@,@,@)", globalpos.x, globalpos.y, globalpos.z);
 
-	
 	iferr_scope_handler
 	{
 		err.DbgStop();
@@ -295,8 +298,11 @@ Bool RegisterOceanSimulationEffector();
 Bool RegisterOceanSimulationEffector()
 
 {
-	return RegisterEffectorPlugin(ID_OCEAN_SIMULATION_EFFECTOR, "Ocean Simulation Effector"_s, OBJECT_CALL_ADDEXECUTION,
+	ApplicationOutput("HOT4D DEBUG: RegisterOceanSimulationEffector called"_s);
+	const Bool ok = RegisterEffectorPlugin(ID_OCEAN_SIMULATION_EFFECTOR, "Ocean Simulation Effector"_s, OBJECT_CALL_ADDEXECUTION,
 									OceanSimulationEffector::Alloc, "OOceanEffector"_s, AutoBitmap("hot4D_eff.tif"_s), 0);
+	ApplicationOutput("HOT4D DEBUG: RegisterOceanSimulationEffector result=@", ok);
+	return ok;
 }
 
 

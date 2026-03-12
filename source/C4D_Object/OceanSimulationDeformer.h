@@ -25,6 +25,7 @@ private:
 	maxon::Int32				falloffDirtyCheck_ = 0; ///< store the checkdirty to see if the fields have changed.
 	
 	maxon::Float				MapRange(maxon::Float value, const maxon::Float min_input, const maxon::Float max_input, const maxon::Float min_output, const maxon::Float max_output) const;
+	Bool						EnsureFalloff(BaseObject* op) const;
 
 public:
 	virtual ~OceanSimulationDeformer()
@@ -42,12 +43,15 @@ public:
 
 	virtual void				CheckDirty(BaseObject* op, const BaseDocument* doc) override;
 	virtual Bool				GetDEnabling(const GeListNode *node, const DescID &id, const GeData &t_data, DESCFLAGS_ENABLE flags, const BaseContainer *itemdesc) const override;
+	virtual Bool				AddToExecution(BaseObject* op, PriorityList* list) override;
+	virtual EXECUTIONRESULT		Execute(BaseObject* op, BaseDocument* doc, BaseThread* bt, Int32 priority, EXECUTIONFLAGS flags) override;
 
 	virtual Bool                Init(GeListNode *node, Bool isCloneInit) override;
 	// removed free because of the use of reference of ocean object
 	// virtual void				Free(GeListNode *node);
 	virtual Bool                Message(GeListNode *node, Int32 type, void *t_data) override;
 	virtual Bool                ModifyObject(const BaseObject *mod, const BaseDocument *doc, BaseObject *op, const Matrix &op_mg, const Matrix &mod_mg, Float lod, Int32 flags, BaseThread *thread) const override;
+	virtual maxon::Result<Bool> GetAccessedObjects(const BaseList2D* node, METHOD_ID method, AccessedObjectsCallback& access) const override;
 
 	static NodeData *Alloc() { return NewObjClear(OceanSimulationDeformer); }
 };

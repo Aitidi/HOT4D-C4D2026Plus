@@ -27,6 +27,11 @@
 
 #include <cmath>
 
+namespace OceanSimulation
+{
+	maxon::Result<OceanRef> CreateOceanDirect();
+}
+
 namespace
 {
 	static inline Bool IsFiniteScalar(const maxon::Float value)
@@ -59,15 +64,45 @@ maxon::Float OceanSimulationDeformer::MapRange(maxon::Float value, const maxon::
 
 }
 
+Bool OceanSimulationDeformer::EnsureFalloff(BaseObject* op) const
+{
+	if (!op)
+		return false;
+	if (falloff_)
+		return true;
+
+		falloff_ = C4D_Falloff::Alloc(op->GetDataInstance());
+	if (!falloff_)
+		return false;
+	if (!falloff_->SetMode(FIELDS))
+		return false;
+	if (!falloff_->InitFalloff(nullptr, op))
+		return false;
+	return true;
+}
+
 Bool OceanSimulationDeformer::Message(GeListNode *node, Int32 type, void *t_data)
 {
+	BaseObject* op = static_cast<BaseObject*>(node);
+	if (!falloff_)
+		EnsureFalloff(op);
 	if (falloff_)
 		falloff_->Message(static_cast<BaseList2D*>(node), type, t_data);
 
-	switch (type) 
+	switch (type)
 	{
 		case MSG_MENUPREPARE: {
 			((BaseObject*)node)->SetDeformMode(true);
+			break;
+		}
+		case MSG_ANIMATE:
+		{
+			BaseObject* baseObject = static_cast<BaseObject*>(node);
+			if (baseObject)
+			{
+				baseObject->SetDirty(DIRTYFLAGS::DATA | DIRTYFLAGS::SELECT | DIRTYFLAGS::MATRIX);
+				baseObject->Message(MSG_UPDATE);
+			}
 			break;
 		}
 	
@@ -83,11 +118,9 @@ Bool OceanSimulationDeformer::Message(GeListNode *node, Int32 type, void *t_data
 
 Bool OceanSimulationDeformer::Init(GeListNode *node, Bool isCloneInit)
 {
-
 	iferr_scope_handler
 	{
-
-		DiagnosticOutput("Error: @", err);
+		ApplicationOutput("HOT4D DEBUG: Deformer::Init error: @", err);
 		return false;
 	};
 
@@ -98,42 +131,38 @@ Bool OceanSimulationDeformer::Init(GeListNode *node, Bool isCloneInit)
 
 
 	BaseObject		*op = (BaseObject*)node;
-
-	if (isCloneInit)
-		return true;
-
-	op->SetParameter(CreateDescID(OCEAN_RESOLUTION), GeData(7), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(SEED), GeData(12345), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(OCEAN_SIZE), GeData(400.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(WIND_SPEED), GeData(20.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(WIND_DIRECTION), GeData(120.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(SHRT_WAVELENGHT), GeData(0.01), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(WAVE_HEIGHT), GeData(30.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(CHOPAMOUNT), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(DAMP_REFLECT), GeData(1.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(WIND_ALIGNMENT), GeData(1.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(OCEAN_DEPTH), GeData(200.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(CURRENTTIME), GeData(0.0), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(TIMELOOP), GeData(90), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(TIMESCALE), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(AUTO_ANIM_TIME), GeData(true), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(PRE_RUN_FOAM), GeData(false), DESCFLAGS_SET::NONE);  // should be false by default
-	op->SetParameter(CreateDescID(DO_CATMU_INTER), GeData(false), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(DO_JACOBIAN), GeData(false), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(DO_CHOPYNESS), GeData(true), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(PSEL_THRES), GeData(0.1), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(JACOB_THRES), GeData(0.5), DESCFLAGS_SET::NONE);
-	op->SetParameter(CreateDescID(FOAM_THRES), GeData(0.03), DESCFLAGS_SET::NONE);
-	
-	op->SetParameter(CreateDescID(ACTIVE_DEFORM), GeData(true), DESCFLAGS_SET::NONE);
-
-	if (!falloff_)
-		falloff_ = C4D_Falloff::Alloc(op->GetDataInstance());
-	if (!falloff_)
+	if (!op)
 		return false;
-	if (!falloff_->SetMode(FIELDS))
-		return false;
-	if (!falloff_->InitFalloff(nullptr, op))
+
+	if (!isCloneInit)
+	{
+		op->SetParameter(CreateDescID(OCEAN_RESOLUTION), GeData(7), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(SEED), GeData(12345), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(OCEAN_SIZE), GeData(400.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(WIND_SPEED), GeData(20.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(WIND_DIRECTION), GeData(120.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(SHRT_WAVELENGHT), GeData(0.01), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(WAVE_HEIGHT), GeData(30.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(CHOPAMOUNT), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(DAMP_REFLECT), GeData(1.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(WIND_ALIGNMENT), GeData(1.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(OCEAN_DEPTH), GeData(200.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(CURRENTTIME), GeData(0.0), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(TIMELOOP), GeData(90), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(TIMESCALE), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(AUTO_ANIM_TIME), GeData(true), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(PRE_RUN_FOAM), GeData(false), DESCFLAGS_SET::NONE);  // should be false by default
+		op->SetParameter(CreateDescID(DO_CATMU_INTER), GeData(false), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(DO_JACOBIAN), GeData(false), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(DO_CHOPYNESS), GeData(true), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(PSEL_THRES), GeData(0.1), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(JACOB_THRES), GeData(0.5), DESCFLAGS_SET::NONE);
+		op->SetParameter(CreateDescID(FOAM_THRES), GeData(0.03), DESCFLAGS_SET::NONE);
+		
+		op->SetParameter(CreateDescID(ACTIVE_DEFORM), GeData(true), DESCFLAGS_SET::NONE);
+	}
+
+	if (!EnsureFalloff(op))
 		return false;
 
 
@@ -149,6 +178,8 @@ Bool OceanSimulationDeformer::Init(GeListNode *node, Bool isCloneInit)
 Bool OceanSimulationDeformer::GetDDescription(const GeListNode *node, Description *description, DESCFLAGS_DESC &flags) const
 {
 	BaseObject *op = (BaseObject*)node;
+	if (!falloff_)
+		EnsureFalloff(op);
 	if (!op) 
 		return false;
 	if (!description->LoadDescription(op->GetType())) 
@@ -179,6 +210,11 @@ Bool OceanSimulationDeformer::CopyTo(NodeData *dest, const GeListNode *snode, Ge
 		if (!falloff_->CopyTo(df->falloff_, static_cast<BaseList2D*>(dnode))) 
 			return false;
 	return ObjectData::CopyTo(dest, snode, dnode, flags, trn);
+}
+
+maxon::Result<Bool> OceanSimulationDeformer::GetAccessedObjects(const BaseList2D* node, METHOD_ID method, AccessedObjectsCallback& access) const
+{
+	return GetAccessedObjectsDeformerBase(node, falloff_, method, access);
 }
 
 DRAWRESULT OceanSimulationDeformer::Draw(BaseObject *op, DRAWPASS drawpass, BaseDraw *bd, BaseDrawHelp *bh)
@@ -233,8 +269,39 @@ void OceanSimulationDeformer::SetHandle(BaseObject *op, Int32 i, Vector p, const
 		falloff_->SetHandle(i, p, info);
 }
 
+Bool OceanSimulationDeformer::AddToExecution(BaseObject* op, PriorityList* list)
+{
+	if (!list || !op)
+		return false;
+	list->Add(op, EXECUTIONPRIORITY_ANIMATION, EXECUTIONFLAGS::NONE);
+	return true;
+}
+
+EXECUTIONRESULT OceanSimulationDeformer::Execute(BaseObject* op, BaseDocument* doc, BaseThread* bt, Int32 priority, EXECUTIONFLAGS flags)
+{
+	if (!op || !doc)
+		return EXECUTIONRESULT::OK;
+
+	GeData data;
+	op->GetParameter(CreateDescID(AUTO_ANIM_TIME), data, DESCFLAGS_GET::NONE);
+	if (data.GetBool())
+	{
+		const BaseTime btCurrentTime = doc->GetTime();
+		const maxon::Float currentFrame = btCurrentTime.GetFrame(doc->GetFps());
+		if (currentTime_ != currentFrame)
+		{
+			currentTime_ = currentFrame;
+			op->SetDirty(DIRTYFLAGS::DATA | DIRTYFLAGS::SELECT | DIRTYFLAGS::MATRIX);
+			op->Message(MSG_UPDATE);
+		}
+	}
+	return EXECUTIONRESULT::OK;
+}
+
 void OceanSimulationDeformer::CheckDirty(BaseObject* op, const BaseDocument* doc)
 {
+	if (!falloff_)
+		EnsureFalloff(op);
 
 	// fields
 	if (falloff_)
@@ -264,7 +331,9 @@ void OceanSimulationDeformer::CheckDirty(BaseObject* op, const BaseDocument* doc
 		if (currentTime_ != currentFrame)
 		{
 			currentTime_ = currentFrame;
-			op->SetDirty(DIRTYFLAGS::DATA);
+			op->SetDirty(DIRTYFLAGS::DATA | DIRTYFLAGS::SELECT | DIRTYFLAGS::MATRIX);
+			op->Message(MSG_UPDATE);
+			EventAdd(EVENT::ANIMATE);
 		}
 	}
 
@@ -275,6 +344,8 @@ void OceanSimulationDeformer::CheckDirty(BaseObject* op, const BaseDocument* doc
 
 Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocument *doc, BaseObject *op, const Matrix &op_mg, const Matrix &mod_mg, Float lod, Int32 flags, BaseThread *thread) const
 {
+	if (!falloff_)
+		EnsureFalloff(const_cast<BaseObject*>(mod));
 
 	iferr_scope_handler
 	{
@@ -282,7 +353,7 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 		return true;
 	};
 
-	if (!op->IsInstanceOf(Opoint) || !falloff_) 
+	if (!op->IsInstanceOf(Opoint) || !falloff_)
 		return true;
 
 	
@@ -315,7 +386,7 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 
 	padr = ToPoint(op)->GetPointW();
 	pcnt = ToPoint(op)->GetPointCount(); 
-	if (!padr || !pcnt) 
+	if (!padr || !pcnt)
 		return true;
 	weight = ToPoint(op)->CalcVertexMap(mod);
 	finally{
@@ -431,7 +502,6 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 
 
 
-
 	if (jacobmaptag) 
 	{
 
@@ -475,8 +545,12 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 	{
 		iferr (oceanSimulationRef_ = OceanSimulation::Ocean().Create())
 		{
-			DiagnosticOutput("OceanSimulationDeformer: failed to create ocean simulation, leaving source geometry untouched: @", err);
-			return true;
+			ApplicationOutput("HOT4D DEBUG: ModifyObject using CreateOceanDirect fallback: @", err);
+			iferr (oceanSimulationRef_ = OceanSimulation::CreateOceanDirect())
+			{
+				ApplicationOutput("HOT4D DEBUG: ModifyObject CreateOceanDirect failed: @", err);
+				return true;
+			};
 		};
 	}
 
@@ -484,16 +558,29 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 	{
 		iferr (oceanSimulationRef_.Init(oceanResolution, oceanSize, shrtWaveLenght, waveHeight, windSpeed, windDirection, windAlign, dampReflection, seed))
 		{
-			DiagnosticOutput("OceanSimulationDeformer: failed to initialize ocean simulation, leaving source geometry untouched: @", err);
+			ApplicationOutput("HOT4D DEBUG: ModifyObject abort init-ocean failed: @", err);
 			return true;
 		};
 	}
 
 	iferr (oceanSimulationRef_.Animate(currentTime_, timeLoop, timeScale, oceanDepth, chopAmount, true, doChopyness, doJacobian, doNormals))
 	{
-		DiagnosticOutput("OceanSimulationDeformer: failed to animate ocean simulation, leaving source geometry untouched: @", err);
+		ApplicationOutput("HOT4D DEBUG: ModifyObject abort animate-ocean failed: @", err);
 		return true;
 	};
+
+	const maxon::Vector firstBefore = pcnt > 0 ? padr[0] : maxon::Vector(0.0);
+	maxon::Vector firstDisp(0.0);
+	maxon::Float firstJMinus = 0.0;
+	if (pcnt > 0)
+	{
+		maxon::Vector firstNormal;
+		iferr (oceanSimulationRef_.EvaluatePoint(doCatmuInter ? OceanSimulation::INTERTYPE::CATMULLROM : OceanSimulation::INTERTYPE::LINEAR, firstBefore, firstDisp, firstNormal, firstJMinus))
+		{
+			ApplicationOutput("HOT4D DEBUG: ModifyObject abort first-EvaluatePoint failed at time=@", currentTime_);
+			return true;
+		}
+	}
 
 	const Bool hasFalloffContent = falloff_->HasContent();
 	FieldInput inputs(padr, pcnt, op_mg);
@@ -590,7 +677,15 @@ Bool OceanSimulationDeformer::ModifyObject(const BaseObject *mod, const BaseDocu
 			padr[i] = p; // finally update the point
 	};
 	maxon::ParallelFor::Dynamic(0, pcnt, updatePoints);
-
+	if (pcnt > 0)
+	{
+		ApplicationOutput("HOT4D DEBUG: ModifySummary t=@ auto=@ deform=@ pts=@ p0_before=(@,@,@) disp0=(@,@,@) j0=@ p0_after=(@,@,@)",
+			currentTime_, doAutoTime, doDeform, pcnt,
+			firstBefore.x, firstBefore.y, firstBefore.z,
+			firstDisp.x, firstDisp.y, firstDisp.z,
+			firstJMinus,
+			padr[0].x, padr[0].y, padr[0].z);
+	}
 
 	if (jacobmaptag && jacobpoint && doJacobian)
 	{
@@ -775,7 +870,7 @@ Bool RegisterOceanSimulationDeformer();
 Bool RegisterOceanSimulationDeformer()
 {
 
-	return RegisterObjectPlugin(ID_OCEAN_SIMULATION_DEFORMER, "HOT 4D"_s, OBJECT_MODIFIER, OceanSimulationDeformer::Alloc, "OOceanDeformer"_s, AutoBitmap("hot4D.tif"_s), 0);
+	return RegisterObjectPlugin(ID_OCEAN_SIMULATION_DEFORMER, "HOT 4D"_s, OBJECT_MODIFIER | OBJECT_CALL_ADDEXECUTION, OceanSimulationDeformer::Alloc, "OOceanDeformer"_s, AutoBitmap("hot4D.tif"_s), 0);
 	
 }
 

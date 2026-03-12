@@ -9,6 +9,7 @@
 
 
 namespace OceanSimulation {
+	namespace reflection = maxon::reflection;
 	//----------------------------------------------------------------------------------------
 	/// interpolation enumeration
 	//----------------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ namespace OceanSimulation {
 
 	class OceanInterface : MAXON_INTERFACE_BASES(maxon::ObjectInterface)
 	{
-		MAXON_INTERFACE(OceanInterface, MAXON_REFERENCE_NORMAL, "com.valkaari.OceanSimulation.interfaces.ocean");
+		MAXON_INTERFACE(OceanInterface, MAXON_REFERENCE_NORMAL, "com.valkaari.OceanSimulation.interfaces.ocean", MAXON_IMPLEMENTATION_MODULE("com.valkaari.hot4D"));
 
 	public: 
 		
@@ -98,7 +99,7 @@ namespace OceanSimulation {
 
 #include "OceanSimulation_decl1.hxx"
 
-	MAXON_DECLARATION(maxon::Class<OceanRef>, Ocean, "com.valkaari.OceanSimulation.ocean");
+	MAXON_DECLARATION(maxon::Class<OceanRef>, Ocean, "com.valkaari.OceanSimulation.ocean", MAXON_IMPLEMENTATION_MODULE("com.valkaari.hot4D"));
 
 #include "OceanSimulation_decl2.hxx"
 
