@@ -9,6 +9,7 @@
 #include "c4d.h"
 #include "main.h"
 #include "OceanSimulation/OceanSimulation_decl.h"
+#include "OceanSimulation/MiniProbe_decl.h"
 
 namespace OceanSimulation
 {
@@ -16,21 +17,19 @@ namespace OceanSimulation
 	maxon::Result<void> RunOceanImplementationSelfTest();
 }
 
+
 namespace cinema
 {
-Bool PluginStart()
+static void RunHot4DPostStartupDiagnostics()
 {
-	if (!::RegisterOceanSimulationDescription())
-		return false;
-	if (!::RegisterOceanSimulationDeformer())
-		return false;
-	if (!::RegisterOceanSimulationEffector())
-		return false;
-
 	const auto& oceanDecl = OceanSimulation::Ocean();
+	const maxon::Bool hasOceanClass = maxon::System::FindDefinition(maxon::EntityBase::TYPE::CLASS, maxon::Id("com.valkaari.OceanSimulation.ocean")) != nullptr;
+	const maxon::Bool hasOceanComponent = maxon::System::FindDefinition(maxon::EntityBase::TYPE::COMPONENT, maxon::Id("com.valkaari.OceanSimulation.ocean")) != nullptr;
+
 	iferr (OceanSimulation::RunOceanImplementationSelfTest())
 	{
-		ApplicationOutput("HOT4D DEBUG: RunOceanImplementationSelfTest failed: @", err);
+		ApplicationOutput("HOT4D DEBUG: Ocean self-test failed: @", err);
+		return;
 	}
 
 	iferr (auto startupOcean = oceanDecl.Create())
@@ -40,7 +39,25 @@ Bool PluginStart()
 		{
 			ApplicationOutput("HOT4D DEBUG: CreateOceanDirect fallback failed: @", err);
 		}
+		else
+		{
+			ApplicationOutput("HOT4D DEBUG: Ocean fallback create succeeded (class=@, component=@)"_s, hasOceanClass, hasOceanComponent);
+		}
 	}
+	else
+	{
+		ApplicationOutput("HOT4D DEBUG: Ocean declaration create succeeded (class=@, component=@)"_s, hasOceanClass, hasOceanComponent);
+	}
+}
+
+Bool PluginStart()
+{
+	if (!::RegisterOceanSimulationDescription())
+		return false;
+	if (!::RegisterOceanSimulationDeformer())
+		return false;
+	if (!::RegisterOceanSimulationEffector())
+		return false;
 
 	ApplicationOutput("---------------"_s);
 	ApplicationOutput("HOT4D C4D2026Plus adaptation build"_s);
@@ -60,6 +77,10 @@ Bool PluginMessage(Int32 id, void *data)
 		case C4DPL_INIT_SYS:
 			if (!g_resource.Init())
 				return false;
+			return true;
+
+		case C4DPL_STARTACTIVITY:
+			RunHot4DPostStartupDiagnostics();
 			return true;
 
 		case C4DMSG_PRIORITY:

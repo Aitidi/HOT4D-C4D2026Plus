@@ -1,1 +1,2 @@
-#include "registration_com_valkaari_hot4D.hxx"
+#define PRIVATE_MAXON_GENERATED_UNIT
+#include "register.hxx"
