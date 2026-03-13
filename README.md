@@ -37,18 +37,6 @@ The current port has been verified to the point where:
 
 In short: this repo is no longer just an investigation branch; it is a working Cinema 4D 2026 adaptation of HOT4D.
 
-## What was fixed during the 2026 port
-
-The important compatibility and stability fixes include:
-
-- restoring the real ocean implementation path in `OceanSimulation_impl.cpp`,
-- fixing the Maxon registration bootstrap so `Ocean().Create()` succeeds again,
-- making the registration fix reproducible via `project/CMakeLists.txt`,
-- restoring deformer playback updates through the execution chain,
-- fixing unsafe parallel selection-tag writes in the Jacobian / point-selection path,
-- restoring Jacobian / foam tag creation and related UI behavior,
-- cleaning out temporary diagnostic scaffolding once the port was stabilized.
-
 For a deeper engineering write-up of the lessons learned during the port, see:
 
 - `BUILDING.md`
