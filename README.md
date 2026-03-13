@@ -1,5 +1,7 @@
 # HOT4D-C4D2026Plus
 
+[中文说明 / Chinese README](./README.zh-CN.md)
+
 HOT4D has now been **adapted and brought up successfully for Cinema 4D 2026** in this repository.
 
 This repository is a continuation/adaptation of the original HOT4D project, with the goal of keeping the plugin usable on newer Cinema 4D SDKs while preserving the original architecture and license.
